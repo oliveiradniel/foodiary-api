@@ -166,6 +166,9 @@ importers:
 
   .:
     dependencies:
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       zod:
         specifier: ^4.6.5
         version: 4.6.5
@@ -454,6 +457,9 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  reflect-metadata@0.2.2:
+    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
+
   typescript@7.0.2:
     resolution: {integrity: sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA==}
     engines: {node: '>=16.20.0'}
@@ -613,6 +619,8 @@ snapshots:
       '@oxlint/binding-win32-x64-msvc': 1.85.0
 
   prettier@3.9.8: {}
+
+  reflect-metadata@0.2.2: {}
 
   typescript@7.0.2:
     optionalDependencies:
