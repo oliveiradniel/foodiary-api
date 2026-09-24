@@ -1,10 +1,11 @@
 import type { HttpRequest } from '../contracts/HttpRequest';
+import type { HttpResponse } from '../contracts/HttpResponse';
 
 export class HelloController {
-	async handle(request: HttpRequest) {
+	async handle(request: HttpRequest): Promise<HttpResponse<unknown>> {
 		return {
 			statusCode: 200,
-			body: JSON.stringify({ request }),
+			body: { request },
 		};
 	}
 }
