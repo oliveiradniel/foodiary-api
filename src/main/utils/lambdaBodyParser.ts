@@ -1,4 +1,4 @@
-import { BadRequest } from '../../application/errors/http/BadRequest';
+import { BadRequest } from '@application/errors/http/BadRequest';
 
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 

@@ -1,16 +1,16 @@
-import { lambdaErrorResponse } from '../utils/lambdaErrorResponse';
 import { lambdaBodyParser } from '../utils/lambdaBodyParser';
+import { lambdaErrorResponse } from '../utils/lambdaErrorResponse';
 
+import { HttpError } from '@application/errors/http/HttpError';
 import { ZodError } from 'zod';
-import { HttpError } from '../../application/errors/http/HttpError';
 
-import type { Controller } from '../../application/contracts/Controller';
+import type { Controller } from '@application/contracts/Controller';
 import type {
 	APIGatewayProxyEventV2,
 	APIGatewayProxyResultV2,
 } from 'aws-lambda';
 
-import { ERROR_CODE } from '../../application/errors/ErrorCode';
+import { ERROR_CODE } from '@application/errors/ErrorCode';
 
 export function lambdaHttpAdapter(controller: Controller<unknown>) {
 	return async (
