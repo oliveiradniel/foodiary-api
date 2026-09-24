@@ -21,11 +21,13 @@
 	},
 	"packageManager": "pnpm@12.6.0",
 	"devDependencies": {
+		"@swc/core": "^1.16.2",
 		"@types/aws-lambda": "^8.10.163",
 		"@types/node": "^26.6.2",
 		"oxlint": "^1.85.0",
 		"prettier": "^3.9.8",
-		"typescript": "^7.0.2"
+		"typescript": "^7.0.2",
+		"unplugin-swc": "^2.0.0"
 	},
 	"dependencies": {
 		"reflect-metadata": "^0.2.2",

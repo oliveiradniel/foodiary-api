@@ -20,7 +20,7 @@
 		"skipLibCheck": true,
 		"noImplicitOverride": true,
 		"experimentalDecorators": true,
-		// "emitDecoratorMetadata": true
+		"emitDecoratorMetadata": true,
 		"paths": {
 			"@application/*": ["./src/application/*"],
 			"@kernel/*": ["./src/kernel/*"],

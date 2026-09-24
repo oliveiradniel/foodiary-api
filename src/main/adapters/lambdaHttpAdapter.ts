@@ -50,6 +50,9 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
 				return lambdaErrorResponse(error);
 			}
 
+			// oxlint-disable-next-line no-console
+			console.log(error);
+
 			return lambdaErrorResponse({
 				statusCode: 500,
 				code: ERROR_CODE.INTERNAL_SERVER_ERROR,
