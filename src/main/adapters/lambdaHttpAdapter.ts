@@ -1,11 +1,12 @@
 import { lambdaBodyParser } from '../utils/lambdaBodyParser';
 
+import type { Controller } from '../../application/contracts/Controller';
 import type {
 	APIGatewayProxyEventV2,
 	APIGatewayProxyResultV2,
 } from 'aws-lambda';
 
-export function lambdaHttpAdapter(controller: any) {
+export function lambdaHttpAdapter(controller: Controller<unknown>) {
 	return async (
 		event: APIGatewayProxyEventV2,
 	): Promise<APIGatewayProxyResultV2> => {
