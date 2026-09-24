@@ -17,7 +17,7 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
 			const params = event.pathParameters ?? {};
 			const queryParams = event.queryStringParameters ?? {};
 
-			const response = await controller.handle({
+			const response = await controller.execute({
 				body,
 				params,
 				queryParams,
