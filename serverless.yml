@@ -26,5 +26,5 @@ functions:
     handler: src/hello.handler
     events:
       - httpApi:
-          path: /
-          method: GET
+          path: /hello/{id}
+          method: POST
