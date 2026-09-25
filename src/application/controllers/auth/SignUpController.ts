@@ -3,7 +3,7 @@ import { Injectable } from '@kernel/decorators/Injectable';
 import { Schema } from '@kernel/decorators/Schema';
 
 // oxlint-disable-next-line typescript/consistent-type-imports
-import { SignUpUseCase } from '@application/usecases/auth/signUpUseCase';
+import { SignUpUseCase } from '@application/usecases/auth/SignUpUseCase';
 import { signUpSchema, type SignUpBody } from './schemas/signUpSchema';
 
 @Injectable()
