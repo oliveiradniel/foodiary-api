@@ -1,10 +1,12 @@
 import { Controller } from '@application/contracts/Controller';
+import { Injectable } from '@kernel/decorators/Injectable';
 import { Schema } from '@kernel/decorators/Schema';
 
 // oxlint-disable-next-line typescript/consistent-type-imports
 import { HelloUseCase } from '@application/usecases/HelloUseCase';
 import { helloSchema, type HelloBody } from './schemas/helloSchema';
 
+@Injectable()
 @Schema(helloSchema)
 export class HelloController extends Controller<unknown> {
 	constructor(private readonly helloUseCase: HelloUseCase) {

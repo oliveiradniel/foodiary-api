@@ -1,4 +1,4 @@
-type Constructor<T = any> = new (...args: any) => T;
+import type { Constructor } from '../../shared/types/Constructor';
 
 export class Registry {
 	private static instance: Registry | undefined;
@@ -11,9 +11,9 @@ export class Registry {
 		return this.instance;
 	}
 
-	private readonly providers = new Map<string, Registry.Provider>();
-
 	private constructor() {}
+
+	private readonly providers = new Map<string, Registry.Provider>();
 
 	register(impl: Constructor) {
 		const token = impl.name;
