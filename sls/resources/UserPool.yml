@@ -22,6 +22,32 @@ Resources:
           RequireNumbers: false
           RequireSymbols: false
           RequireUppercase: false
+      Schema:
+        - Name: internalId
+          Required: false
+          Mutable: false
+          AttributeDataType: String
+      # LambdaConfig:
+      # PreTokenGenerationConfig:
+      # The environment was defined in the provider
+      # So all functions received 'COGNITO_CLIENT_ID': !Ref UserPoolClient
+      # As result, the trigger depends on the client, client depends on the pool
+      # and the pool depends on the trigger
+      # LambdaArn: !GetAtt PreTokenGenerationTriggerLambdaFunction.Arn
+      # With !Sub, the cycle also disappears because the pool stop referencing the
+      # function resource
+      # LambdaArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger'
+      # LambdaVersion: V2_0
+
+  # PreTokenGenerationLambdaPermission:
+  #   Type: AWS::Lambda::Permission
+  #   DependsOn: PreTokenGenerationTriggerLambdaFunction
+  #   Properties:
+  #     Action: lambda:InvokeFunction
+  #     FunctionName: !GetAtt PreTokenGenerationTriggerLambdaFunction.Arn
+  #     Principal: cognito-idp.amazonaws.com
+  #     SourceArn: !GetAtt UserPool.Arn
+
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:

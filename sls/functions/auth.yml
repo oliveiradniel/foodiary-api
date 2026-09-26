@@ -1,4 +1,5 @@
 signUp:
+  environment: ${file(./sls/config/env.yml)}
   handler: src/main/functions/auth/signUp.handler
   events:
     - httpApi:
@@ -6,6 +7,7 @@ signUp:
         method: POST
 
 signIn:
+  environment: ${file(./sls/config/env.yml)}
   handler: src/main/functions/auth/signIn.handler
   events:
     - httpApi:
@@ -18,5 +20,19 @@ preSignUpTrigger:
     - cognitoUserPool:
         pool: ${self:custom.cognito.PoolName}
         trigger: PreSignUp
+        existing: true
+        forceDeploy: true
+
+# The trigger is configured manually to support event V2
+# Go to UserPool.yml to see the configuration
+# Do not change this function name without change in UserPool.yml
+# Disregard those comments; the new version supports it
+preTokenGenerationTrigger:
+  handler: src/main/functions/auth/preTokenGenerationTrigger.handler
+  events:
+    - cognitoUserPool:
+        pool: ${self:custom.cognito.PoolName}
+        trigger: PreTokenGeneration
+        lambdaVersion: V2_0
         existing: true
         forceDeploy: true
