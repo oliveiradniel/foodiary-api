@@ -1,6 +1,7 @@
 import { Injectable } from '@kernel/decorators/Injectable';
 
 import { Account } from '@application/entities/Account';
+import { EmailAlreadyInUse } from '@application/errors/application/EmailAlreadyInUse';
 // oxlint-disable-next-line typescript/consistent-type-imports
 import { AuthGateway } from '@infra/gateways/AuthGateway';
 // oxlint-disable-next-line typescript/consistent-type-imports
@@ -17,6 +18,12 @@ export class SignUpUseCase {
 		email,
 		password,
 	}: SignUpUseCase.Input): Promise<SignUpUseCase.Output> {
+		const emailAlreadyInUse = await this.accountRepo.findByEmail(email);
+
+		if (emailAlreadyInUse) {
+			throw new EmailAlreadyInUse();
+		}
+
 		const { externalId } = await this.authGateway.signUp({ email, password });
 
 		const account = new Account({ email, externalId });

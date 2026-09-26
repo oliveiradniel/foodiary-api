@@ -1,6 +1,7 @@
 import { lambdaBodyParser } from '../utils/lambdaBodyParser';
 import { lambdaErrorResponse } from '../utils/lambdaErrorResponse';
 
+import { ApplicationError } from '@application/errors/application/ApplicationError';
 import { HttpError } from '@application/errors/http/HttpError';
 import { ZodError } from 'zod';
 
@@ -48,6 +49,14 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
 
 			if (error instanceof HttpError) {
 				return lambdaErrorResponse(error);
+			}
+
+			if (error instanceof ApplicationError) {
+				return lambdaErrorResponse({
+					statusCode: error.statusCode ?? 400,
+					code: error.code,
+					message: error.message,
+				});
 			}
 
 			// oxlint-disable-next-line no-console

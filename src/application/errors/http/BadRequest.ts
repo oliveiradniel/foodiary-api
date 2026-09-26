@@ -1,6 +1,6 @@
-import { HttpError } from './HttpError';
+import { HttpError } from '@application/errors/http/HttpError';
 
-import { ERROR_CODE, type ErrorCode } from '../ErrorCode';
+import { ERROR_CODE, type ErrorCode } from '@application/errors/ErrorCode';
 
 export class BadRequest extends HttpError {
 	public override statusCode = 400;

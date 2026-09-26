@@ -4,6 +4,9 @@ export const ERROR_CODE = {
 	// HTTP
 	INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
 	BAD_REQUEST: 'BAD_REQUEST',
+
+	// APP
+	EMAIL_ALREADY_IN_USE: 'EMAIL_ALREADY_IN_USE',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODE)[keyof typeof ERROR_CODE];
