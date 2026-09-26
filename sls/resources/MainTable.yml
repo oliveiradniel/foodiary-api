@@ -4,7 +4,7 @@ Resources:
     Properties:
       TableName: ${self:service}-${self:provider.stage}-MainTable
       BillingMode: PAY_PER_REQUEST
-      DeletionProtectionEnabled: true
+      DeletionProtectionEnabled: ${self:custom.deletionProtectionEnabled.${self:provider.stage}}
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
         RecoveryPeriodInDays: 35

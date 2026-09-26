@@ -3,7 +3,7 @@ Resources:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: ${self:custom.cognito.PoolName}
-      DeletionProtection: ACTIVE
+      DeletionProtection: ${self:custom.deletionProtection.${self:provider.stage}}
       MfaConfiguration: OFF
       AutoVerifiedAttributes:
         - email
