@@ -12,10 +12,7 @@ import {
 
 @Injectable()
 @Schema(forgotPasswordSchema)
-export class ForgotPasswordController extends Controller<
-	'public',
-	ForgotPasswordController.Response
-> {
+export class ForgotPasswordController extends Controller<'public', void> {
 	constructor(private readonly forgotPasswordUseCase: ForgotPasswordUseCase) {
 		super();
 	}
@@ -23,7 +20,7 @@ export class ForgotPasswordController extends Controller<
 	protected override async handle({
 		body,
 	}: Controller.Request<'public', ForgotPasswordBody>): Promise<
-		Controller.Response<ForgotPasswordController.Response>
+		Controller.Response<void>
 	> {
 		const { email } = body;
 
@@ -35,11 +32,4 @@ export class ForgotPasswordController extends Controller<
 			statusCode: 204,
 		};
 	}
-}
-
-export namespace ForgotPasswordController {
-	export type Response = {
-		accessToken: string;
-		refreshToken: string;
-	};
 }

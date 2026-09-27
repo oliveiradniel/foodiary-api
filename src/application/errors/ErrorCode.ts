@@ -7,6 +7,7 @@ export const ERROR_CODE = {
 
 	// APP
 	EMAIL_ALREADY_IN_USE: 'EMAIL_ALREADY_IN_USE',
+	INVALID_CONFIRMATION_CODE: 'INVALID_CONFIRMATION_CODE',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODE)[keyof typeof ERROR_CODE];
