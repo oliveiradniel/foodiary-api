@@ -1,6 +1,7 @@
 import { Injectable } from '@kernel/decorators/Injectable';
 
 import {
+	ForgotPasswordCommand,
 	GetTokensFromRefreshTokenCommand,
 	InitiateAuthCommand,
 	SignUpCommand,
@@ -95,6 +96,18 @@ export class AuthGateway {
 		};
 	}
 
+	async forgotPassword({
+		email,
+	}: AuthGateway.ForgotPasswordParams): Promise<void> {
+		const command = new ForgotPasswordCommand({
+			ClientId: this.appConfig.auth.cognito.client.id,
+			Username: email,
+			SecretHash: this.getSecretHash(email),
+		});
+
+		await cognitoClient.send(command);
+	}
+
 	private getSecretHash(email: string) {
 		// Base64 ( HMAC_SHA256 ( "Client Secret Key", "Username", "Client Id" ) )
 		const { id, secret } = this.appConfig.auth.cognito.client;
@@ -133,5 +146,9 @@ export namespace AuthGateway {
 	export type RefreshTokenResult = {
 		accessToken: string;
 		refreshToken: string;
+	};
+
+	export type ForgotPasswordParams = {
+		email: string;
 	};
 }
