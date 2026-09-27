@@ -14,6 +14,14 @@ signIn:
         path: /auth/sign-in
         method: POST
 
+refreshToken:
+  environment: ${file(./sls/config/env.yml)}
+  handler: src/main/functions/auth/refreshToken.handler
+  events:
+    - httpApi:
+        path: /auth/refresh-token
+        method: POST
+
 preSignUpTrigger:
   handler: src/main/functions/auth/preSignUpTrigger.handler
   events:

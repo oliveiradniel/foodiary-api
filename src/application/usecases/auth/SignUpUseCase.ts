@@ -52,6 +52,7 @@ export namespace SignUpUseCase {
 		email: string;
 		password: string;
 	};
+
 	export type Output = {
 		accessToken: string;
 		refreshToken: string;
