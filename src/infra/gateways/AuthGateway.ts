@@ -1,5 +1,10 @@
 import { Injectable } from '@kernel/decorators/Injectable';
 
+import { EmailAlreadyInUse } from '@application/errors/application/EmailAlreadyInUse';
+import { InvalidConfirmationCode } from '@application/errors/application/InvalidConfirmationCode';
+import { InvalidCredentials } from '@application/errors/application/InvalidCredentials';
+import { InvalidRefreshToken } from '@application/errors/application/InvalidRefreshToken';
+import { TooManyAttempts } from '@application/errors/application/TooManyAttempts';
 import {
 	ConfirmForgotPasswordCommand,
 	ForgotPasswordCommand,
@@ -31,7 +36,21 @@ export class AuthGateway {
 			},
 		});
 
-		const { AuthenticationResult } = await cognitoClient.send(command);
+		const { AuthenticationResult } = await cognitoClient
+			.send(command)
+			.catch((error: unknown) => {
+				if (
+					isCognitoError(
+						error,
+						'NotAuthorizedException',
+						'UserNotFoundException',
+					)
+				) {
+					throw new InvalidCredentials();
+				}
+
+				throw error;
+			});
 
 		if (
 			!AuthenticationResult?.AccessToken ||
@@ -64,7 +83,15 @@ export class AuthGateway {
 			SecretHash: this.getSecretHash(email),
 		});
 
-		const { UserSub: externalId } = await cognitoClient.send(command);
+		const { UserSub: externalId } = await cognitoClient
+			.send(command)
+			.catch((error: unknown) => {
+				if (isCognitoError(error, 'UsernameExistsException')) {
+					throw new EmailAlreadyInUse();
+				}
+
+				throw error;
+			});
 
 		if (!externalId) {
 			throw new Error(`Cannot signup user: ${email}`);
@@ -82,7 +109,15 @@ export class AuthGateway {
 			ClientSecret: this.appConfig.auth.cognito.client.secret,
 		});
 
-		const { AuthenticationResult } = await cognitoClient.send(command);
+		const { AuthenticationResult } = await cognitoClient
+			.send(command)
+			.catch((error: unknown) => {
+				if (isCognitoError(error, 'NotAuthorizedException')) {
+					throw new InvalidRefreshToken();
+				}
+
+				throw error;
+			});
 
 		if (
 			!AuthenticationResult?.AccessToken ||
@@ -106,7 +141,17 @@ export class AuthGateway {
 			SecretHash: this.getSecretHash(email),
 		});
 
-		await cognitoClient.send(command);
+		await cognitoClient.send(command).catch((error: unknown) => {
+			if (isCognitoError(error, 'UserNotFoundException')) {
+				return;
+			}
+
+			if (isCognitoError(error, 'LimitExceededException')) {
+				throw new TooManyAttempts();
+			}
+
+			throw error;
+		});
 	}
 
 	async confirmForgotPassword({
@@ -122,7 +167,25 @@ export class AuthGateway {
 			SecretHash: this.getSecretHash(email),
 		});
 
-		await cognitoClient.send(command);
+		await cognitoClient.send(command).catch((error: unknown) => {
+			if (
+				isCognitoError(error, 'CodeMismatchException', 'ExpiredCodeException')
+			) {
+				throw new InvalidConfirmationCode();
+			}
+
+			if (
+				isCognitoError(
+					error,
+					'LimitExceededException',
+					'TooManyFailedAttemptsException',
+				)
+			) {
+				throw new TooManyAttempts();
+			}
+
+			throw error;
+		});
 	}
 
 	private getSecretHash(email: string) {
@@ -133,6 +196,11 @@ export class AuthGateway {
 			.update(`${email}${id}`)
 			.digest('base64');
 	}
+}
+
+// Compare by name: instanceof against the SDK error classes fails in the Lambda runtime
+function isCognitoError(error: unknown, ...names: string[]) {
+	return error instanceof Error && names.includes(error.name);
 }
 
 export namespace AuthGateway {

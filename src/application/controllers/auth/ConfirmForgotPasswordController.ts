@@ -1,5 +1,4 @@
 import { Controller } from '@application/contracts/Controller';
-import { InvalidConfirmationCode } from '@application/errors/application/InvalidConfirmationCode';
 import { Injectable } from '@kernel/decorators/Injectable';
 import { Schema } from '@kernel/decorators/Schema';
 
@@ -28,28 +27,16 @@ export class ConfirmForgotPasswordController extends Controller<
 	}: Controller.Request<'public', ConfirmForgotPasswordBody>): Promise<
 		Controller.Response<void>
 	> {
-		try {
-			const { email, confirmationCode, newPassword } = body;
+		const { email, confirmationCode, newPassword } = body;
 
-			await this.confirmForgotPasswordUseCase.execute({
-				email,
-				confirmationCode,
-				newPassword,
-			});
+		await this.confirmForgotPasswordUseCase.execute({
+			email,
+			confirmationCode,
+			newPassword,
+		});
 
-			return {
-				statusCode: 204,
-			};
-		} catch (error) {
-			if (
-				error instanceof Error &&
-				(error.name === 'CodeMismatchException' ||
-					error.name === 'ExpiredCodeException')
-			) {
-				throw new InvalidConfirmationCode();
-			}
-
-			throw error;
-		}
+		return {
+			statusCode: 204,
+		};
 	}
 }
