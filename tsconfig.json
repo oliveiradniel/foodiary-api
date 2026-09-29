@@ -21,6 +21,7 @@
 		"noImplicitOverride": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
+		"jsx": "react",
 		"paths": {
 			"@application/*": ["./src/application/*"],
 			"@kernel/*": ["./src/kernel/*"],
