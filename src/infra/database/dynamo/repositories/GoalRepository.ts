@@ -1,6 +1,6 @@
 import { Injectable } from '@kernel/decorators/Injectable';
 
-import { PutCommand } from '@aws-sdk/lib-dynamodb';
+import { PutCommand, type PutCommandInput } from '@aws-sdk/lib-dynamodb';
 
 import { GoalItem } from '@infra/database/dynamo/items/GoalItem';
 // oxlint-disable-next-line typescript/consistent-type-imports
@@ -14,13 +14,17 @@ import type { Goal } from '@application/entities/Goal';
 export class GoalRepository {
 	constructor(private readonly appConfig: AppConfig) {}
 
-	async create(goal: Goal): Promise<void> {
+	getPutCommandInput(goal: Goal): PutCommandInput {
 		const goalItem = GoalItem.fromEntity(goal);
 
-		const command = new PutCommand({
+		return {
 			TableName: this.appConfig.db.dynamodb.mainTable,
 			Item: goalItem.toItem(),
-		});
+		};
+	}
+
+	async create(goal: Goal): Promise<void> {
+		const command = new PutCommand(this.getPutCommandInput(goal));
 
 		await dynamoClient.send(command);
 	}

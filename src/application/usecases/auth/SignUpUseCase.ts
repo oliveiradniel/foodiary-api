@@ -1,10 +1,15 @@
+// oxlint-disable typescript/consistent-type-imports
+
 import { Injectable } from '@kernel/decorators/Injectable';
 
-import { Account } from '@application/entities/Account';
 import { EmailAlreadyInUse } from '@application/errors/application/EmailAlreadyInUse';
-// oxlint-disable-next-line typescript/consistent-type-imports
+import { SignUpUnitOfWork } from '@infra/database/dynamo/uow/SignUpUnitOfWork';
 import { AuthGateway } from '@infra/gateways/AuthGateway';
-// oxlint-disable-next-line typescript/consistent-type-imports
+
+import { Account } from '@application/entities/Account';
+import { Goal } from '@application/entities/Goal';
+import { Profile } from '@application/entities/Profile';
+
 import { AccountRepository } from '@infra/database/dynamo/repositories/AccountRepository';
 
 @Injectable()
@@ -12,11 +17,12 @@ export class SignUpUseCase {
 	constructor(
 		private readonly authGateway: AuthGateway,
 		private readonly accountRepo: AccountRepository,
+		private readonly signUpUow: SignUpUnitOfWork,
 	) {}
 
 	async execute({
-		email,
-		password,
+		account: { email, password },
+		profile: { name, birthDate, gender, height, weight, activityLevel },
 	}: SignUpUseCase.Input): Promise<SignUpUseCase.Output> {
 		const emailAlreadyInUse = await this.accountRepo.findByEmail(email);
 
@@ -25,6 +31,23 @@ export class SignUpUseCase {
 		}
 
 		const account = new Account({ email });
+		const profile = new Profile({
+			accountId: account.id,
+			name,
+			birthDate,
+			gender,
+			height,
+			weight,
+			activityLevel,
+		});
+		const goal = new Goal({
+			accountId: account.id,
+			calories: 2500,
+			proteins: 180,
+			fats: 80,
+			carbohydrates: 500,
+		});
+
 		const { externalId } = await this.authGateway.signUp({
 			email,
 			password,
@@ -33,7 +56,7 @@ export class SignUpUseCase {
 
 		account.externalId = externalId;
 
-		await this.accountRepo.create(account);
+		await this.signUpUow.run({ account, goal, profile });
 
 		const { accessToken, refreshToken } = await this.authGateway.signIn({
 			email,
@@ -49,8 +72,18 @@ export class SignUpUseCase {
 
 export namespace SignUpUseCase {
 	export type Input = {
-		email: string;
-		password: string;
+		account: {
+			email: string;
+			password: string;
+		};
+		profile: {
+			name: string;
+			birthDate: Date;
+			gender: Profile.Gender;
+			height: number;
+			weight: number;
+			activityLevel: Profile.ActivityLevel;
+		};
 	};
 
 	export type Output = {

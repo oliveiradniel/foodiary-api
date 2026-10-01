@@ -1,6 +1,10 @@
 import { Injectable } from '@kernel/decorators/Injectable';
 
-import { PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import {
+	PutCommand,
+	QueryCommand,
+	type PutCommandInput,
+} from '@aws-sdk/lib-dynamodb';
 
 import { AccountItem } from '@infra/database/dynamo/items/AccountItem';
 // oxlint-disable-next-line typescript/consistent-type-imports
@@ -13,6 +17,15 @@ import type { Account } from '@application/entities/Account';
 @Injectable()
 export class AccountRepository {
 	constructor(private readonly appConfig: AppConfig) {}
+
+	getPutCommandInput(account: Account): PutCommandInput {
+		const accountItem = AccountItem.fromEntity(account);
+
+		return {
+			TableName: this.appConfig.db.dynamodb.mainTable,
+			Item: accountItem.toItem(),
+		};
+	}
 
 	async findByEmail(email: string): Promise<Account | null> {
 		const command = new QueryCommand({
@@ -41,12 +54,7 @@ export class AccountRepository {
 	}
 
 	async create(account: Account): Promise<void> {
-		const accountItem = AccountItem.fromEntity(account);
-
-		const command = new PutCommand({
-			TableName: this.appConfig.db.dynamodb.mainTable,
-			Item: accountItem.toItem(),
-		});
+		const command = new PutCommand(this.getPutCommandInput(account));
 
 		await dynamoClient.send(command);
 	}
