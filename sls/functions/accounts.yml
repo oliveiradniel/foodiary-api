@@ -1,0 +1,9 @@
+getMe:
+  environment: ${file(./sls/config/env.yml)}
+  handler: src/main/functions/accounts/getMe.handler
+  events:
+    - httpApi:
+        path: /me
+        method: GET
+        authorizer:
+          name: CognitoAuthorizer

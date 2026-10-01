@@ -3,7 +3,8 @@ import { Profile } from '@application/entities/Profile';
 import type { AccountItem } from './AccountItem';
 
 export class ProfileItem {
-	private readonly type = 'Profile';
+	static readonly type = 'Profile';
+
 	private readonly keys: ProfileItem.Keys;
 
 	constructor(private readonly attrs: ProfileItem.Attributes) {
@@ -15,9 +16,9 @@ export class ProfileItem {
 
 	toItem(): ProfileItem.ItemType {
 		return {
-			type: this.type,
 			...this.attrs,
 			...this.keys,
+			type: ProfileItem.type,
 		};
 	}
 
