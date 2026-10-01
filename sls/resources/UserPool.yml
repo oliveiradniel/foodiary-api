@@ -27,6 +27,15 @@ Resources:
           Required: false
           Mutable: false
           AttributeDataType: String
+      # Sending through SES (DEVELOPER) requires the Cognito email service-linked role.
+      # It is account-wide, so create it once with an admin (e.g. in CloudShell):
+      # aws iam create-service-linked-role --aws-service-name email.cognito-idp.amazonaws.com
+      EmailConfiguration:
+        From: ${env:COGNITO_EMAILS_FROM}
+        ReplyToEmailAddress: ${env:COGNITO_EMAILS_REPLY_TO}
+        EmailSendingAccount: DEVELOPER
+        SourceArn: ${env:SES_ARN}
+
       # LambdaConfig:
       # PreTokenGenerationConfig:
       # The environment was defined in the provider
