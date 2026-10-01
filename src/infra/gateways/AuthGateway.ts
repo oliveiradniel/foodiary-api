@@ -1,21 +1,24 @@
 import { Injectable } from '@kernel/decorators/Injectable';
 
-import { EmailAlreadyInUse } from '@application/errors/application/EmailAlreadyInUse';
-import { InvalidConfirmationCode } from '@application/errors/application/InvalidConfirmationCode';
-import { InvalidCredentials } from '@application/errors/application/InvalidCredentials';
-import { InvalidRefreshToken } from '@application/errors/application/InvalidRefreshToken';
-import { TooManyAttempts } from '@application/errors/application/TooManyAttempts';
 import {
+	AdminDeleteUserCommand,
 	ConfirmForgotPasswordCommand,
 	ForgotPasswordCommand,
 	GetTokensFromRefreshTokenCommand,
 	InitiateAuthCommand,
 	SignUpCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { cognitoClient } from '@infra/clients/cognitoClient';
+
+import { EmailAlreadyInUse } from '@application/errors/application/EmailAlreadyInUse';
+import { InvalidConfirmationCode } from '@application/errors/application/InvalidConfirmationCode';
+import { InvalidCredentials } from '@application/errors/application/InvalidCredentials';
+import { InvalidRefreshToken } from '@application/errors/application/InvalidRefreshToken';
+import { TooManyAttempts } from '@application/errors/application/TooManyAttempts';
+import { UserNotFound } from '@application/errors/application/UserNotFound';
 // oxlint-disable-next-line typescript/consistent-type-imports
 import { AppConfig } from '@shared/config/AppConfig';
 
+import { cognitoClient } from '@infra/clients/cognitoClient';
 import { createHmac } from 'node:crypto';
 
 @Injectable()
@@ -188,6 +191,21 @@ export class AuthGateway {
 		});
 	}
 
+	async deleteUser({ externalId }: AuthGateway.DeleteUserParam) {
+		const command = new AdminDeleteUserCommand({
+			UserPoolId: this.appConfig.auth.cognito.pool.id,
+			Username: externalId,
+		});
+
+		await cognitoClient.send(command).catch((error: unknown) => {
+			if (isCognitoError(error, 'UserNotFoundException')) {
+				throw new UserNotFound();
+			}
+
+			throw error;
+		});
+	}
+
 	private getSecretHash(email: string) {
 		// Base64 ( HMAC_SHA256 ( "Client Secret Key", "Username", "Client Id" ) )
 		const { id, secret } = this.appConfig.auth.cognito.client;
@@ -241,5 +259,9 @@ export namespace AuthGateway {
 		email: string;
 		confirmationCode: string;
 		newPassword: string;
+	};
+
+	export type DeleteUserParam = {
+		externalId: string;
 	};
 }
