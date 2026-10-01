@@ -1,4 +1,5 @@
 import { Profile } from '@application/entities/Profile';
+
 import type { AccountItem } from './AccountItem';
 
 export class ProfileItem {

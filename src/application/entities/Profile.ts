@@ -45,10 +45,10 @@ export namespace Profile {
 	}
 
 	export enum ActivityLevel {
-		SEDENTATY = 'SEDENTARY',
+		SEDENTARY = 'SEDENTARY',
 		LIGHT = 'LIGHT',
 		MODERATE = 'MODERATE',
 		HEAVY = 'HEAVY',
-		ATHLETE = 'ATHELETE',
+		ATHLETE = 'ATHLETE',
 	}
 }
