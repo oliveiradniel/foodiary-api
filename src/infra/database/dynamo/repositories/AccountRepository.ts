@@ -2,7 +2,7 @@ import { Injectable } from '@kernel/decorators/Injectable';
 
 import { PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 
-import { AccountItem } from '@application/entities/items/AccountItem';
+import { AccountItem } from '@infra/database/dynamo/items/AccountItem';
 // oxlint-disable-next-line typescript/consistent-type-imports
 import { AppConfig } from '@shared/config/AppConfig';
 

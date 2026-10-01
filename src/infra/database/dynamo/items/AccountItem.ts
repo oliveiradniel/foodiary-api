@@ -1,4 +1,4 @@
-import { Account } from '../Account';
+import { Account } from '@application/entities/Account';
 
 export class AccountItem {
 	private readonly type = 'Account';
