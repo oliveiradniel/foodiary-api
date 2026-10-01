@@ -11,6 +11,7 @@ import { Account } from '@application/entities/Account';
 import { Goal } from '@application/entities/Goal';
 import { Profile } from '@application/entities/Profile';
 
+import { GoalCalculator } from '@application/services/GoalCalculator';
 import { AccountRepository } from '@infra/database/dynamo/repositories/AccountRepository';
 
 @Injectable()
@@ -24,7 +25,7 @@ export class SignUpUseCase {
 
 	async execute({
 		account: { email, password },
-		profile: { name, birthDate, gender, height, weight, activityLevel },
+		profile: profileInfo,
 	}: SignUpUseCase.Input): Promise<SignUpUseCase.Output> {
 		await this.saga.run<void>(async () => {
 			const emailAlreadyInUse = await this.accountRepo.findByEmail(email);
@@ -35,20 +36,19 @@ export class SignUpUseCase {
 
 			const account = new Account({ email });
 			const profile = new Profile({
+				...profileInfo,
 				accountId: account.id,
-				name,
-				birthDate,
-				gender,
-				height,
-				weight,
-				activityLevel,
 			});
+
+			const { calories, carbohydrates, fats, proteins } =
+				GoalCalculator.calculate(profile);
+
 			const goal = new Goal({
 				accountId: account.id,
-				calories: 2500,
-				proteins: 180,
-				fats: 80,
-				carbohydrates: 500,
+				calories,
+				proteins,
+				fats,
+				carbohydrates,
 			});
 
 			const { externalId } = await this.authGateway.signUp({
@@ -91,6 +91,7 @@ export namespace SignUpUseCase {
 			height: number;
 			weight: number;
 			activityLevel: Profile.ActivityLevel;
+			goal: Profile.Goal;
 		};
 	};
 
