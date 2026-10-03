@@ -4,9 +4,11 @@ import { Injectable } from '@kernel/decorators/Injectable';
 // oxlint-disable-next-line typescript/consistent-type-imports
 import { ListMealsByDayQuery } from '@application/queries/ListMealsByDayQuery';
 
-import { listMealsByDaySchema } from './schemas/listMealsByDaySchema';
-
 import type { Meal } from '@application/entities/Meal';
+import {
+	listMealsByDaySchema,
+	type ListMealsByDayQueryParam,
+} from './schemas/listMealsByDaySchema';
 
 @Injectable()
 export class ListMealsByDayController extends Controller<
@@ -20,7 +22,7 @@ export class ListMealsByDayController extends Controller<
 	protected override async handle({
 		accountId,
 		queryParams,
-	}: Controller.Request<'private'>): Promise<
+	}: ListMealsByDayController.Request): Promise<
 		Controller.Response<ListMealsByDayController.Response>
 	> {
 		const { date } = listMealsByDaySchema.parse(queryParams);
@@ -40,6 +42,13 @@ export class ListMealsByDayController extends Controller<
 }
 
 export namespace ListMealsByDayController {
+	export type Request = Controller.Request<
+		'private',
+		Record<string, unknown>,
+		Record<string, unknown>,
+		ListMealsByDayQueryParam
+	>;
+
 	export type Response = {
 		meals: {
 			id: string;
