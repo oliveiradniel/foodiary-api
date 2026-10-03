@@ -19,6 +19,8 @@ export class Meal {
 
 	foods: Meal.Food[];
 
+	readonly timezone: string;
+
 	readonly createdAt: Date;
 
 	constructor(attr: Meal.Attributes) {
@@ -31,6 +33,7 @@ export class Meal {
 		this.name = attr.name ?? '';
 		this.icon = attr.icon ?? '';
 		this.foods = attr.foods ?? [];
+		this.timezone = attr.timezone;
 		this.createdAt = attr.createdAt ?? new Date();
 	}
 }
@@ -46,6 +49,7 @@ export namespace Meal {
 		name?: string;
 		icon?: string;
 		foods?: Meal.Food[];
+		timezone: string;
 		createdAt?: Date;
 	};
 

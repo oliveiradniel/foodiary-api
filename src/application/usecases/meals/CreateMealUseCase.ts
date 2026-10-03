@@ -15,6 +15,7 @@ export class CreateMealUseCase {
 
 	async execute({
 		accountId,
+		timezone,
 		file,
 	}: CreateMealUseCase.Input): Promise<CreateMealUseCase.Output> {
 		const inputFileKey = MealsFileStorageGateway.generateInputFileKey({
@@ -27,6 +28,7 @@ export class CreateMealUseCase {
 			inputType: file.inputType,
 			status: Meal.Status.UPLOADING,
 			inputFileKey,
+			timezone,
 		});
 
 		const [, { uploadSignature }] = await Promise.all([
@@ -51,6 +53,7 @@ export class CreateMealUseCase {
 export namespace CreateMealUseCase {
 	export type Input = {
 		accountId: string;
+		timezone: string;
 		file: {
 			inputType: Meal.InputType;
 			size: number;

@@ -11,7 +11,10 @@ export class MealItem {
 			SK: MealItem.getSK(this.attrs.id),
 			GSI1PK: MealItem.getGSI1PK({
 				accountId: this.attrs.accountId,
-				createdAt: new Date(this.attrs.createdAt),
+				date: MealItem.toLocalDate(
+					new Date(this.attrs.createdAt),
+					this.attrs.timezone,
+				),
 			}),
 			GSI1SK: MealItem.getGSI1SK(this.attrs.id),
 		};
@@ -43,6 +46,7 @@ export class MealItem {
 			name: mealItem.name,
 			icon: mealItem.icon,
 			foods: mealItem.foods,
+			timezone: mealItem.timezone,
 			createdAt: new Date(mealItem.createdAt),
 		});
 	}
@@ -57,13 +61,14 @@ export class MealItem {
 
 	static getGSI1PK({
 		accountId,
-		createdAt,
+		date,
 	}: MealItem.GSIPKParams): MealItem.Keys['GSI1PK'] {
-		const year = createdAt.getFullYear();
-		const month = String(createdAt.getMonth() + 1).padStart(2, '0');
-		const day = String(createdAt.getDate()).padStart(2, '0');
+		return `MEALS#${accountId}#${date}`;
+	}
 
-		return `MEALS#${accountId}#${year}-${month}-${day}`;
+	// 'en-CA' formats as YYYY-MM-DD
+	static toLocalDate(date: Date, timezone: string): string {
+		return date.toLocaleDateString('en-CA', { timeZone: timezone });
 	}
 
 	static getGSI1SK(mealId: string): MealItem.Keys['GSI1SK'] {
@@ -75,7 +80,7 @@ export namespace MealItem {
 	export type Keys = {
 		PK: `MEAL#${string}`;
 		SK: `MEAL#${string}`;
-		GSI1PK: `MEALS#${string}#${string}-${string}-${string}`;
+		GSI1PK: `MEALS#${string}#${string}`;
 		GSI1SK: `MEAL#${string}`;
 	};
 
@@ -89,6 +94,7 @@ export namespace MealItem {
 		name: string;
 		icon: string;
 		foods: Meal.Food[];
+		timezone: string;
 		createdAt: string;
 	};
 
@@ -96,6 +102,6 @@ export namespace MealItem {
 
 	export type GSIPKParams = {
 		accountId: string;
-		createdAt: Date;
+		date: string;
 	};
 }

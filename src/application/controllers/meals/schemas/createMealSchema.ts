@@ -9,6 +9,16 @@ export const createMealSchema = z.object({
 			.min(1, 'The file should have at least 1 byte.')
 			.max(mbToBytes(10), 'The file should have up to 10MB.'),
 	}),
+	timezone: z.string().refine(isValidTimezone, 'Invalid timezone.'),
 });
+
+function isValidTimezone(timezone: string): boolean {
+	try {
+		new Intl.DateTimeFormat('en-US', { timeZone: timezone });
+		return true;
+	} catch {
+		return false;
+	}
+}
 
 export type CreateMealBody = z.infer<typeof createMealSchema>;
