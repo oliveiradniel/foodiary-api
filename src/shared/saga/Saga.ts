@@ -1,8 +1,5 @@
-import { Injectable } from '@kernel/decorators/Injectable';
-
 type CompensationFn = () => Promise<unknown>;
 
-@Injectable()
 export class Saga {
 	private compensations: CompensationFn[] = [];
 

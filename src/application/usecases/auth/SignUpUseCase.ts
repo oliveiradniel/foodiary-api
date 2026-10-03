@@ -20,14 +20,15 @@ export class SignUpUseCase {
 		private readonly authGateway: AuthGateway,
 		private readonly accountRepo: AccountRepository,
 		private readonly signUpUow: SignUpUnitOfWork,
-		private readonly saga: Saga,
 	) {}
 
 	async execute({
 		account: { email, password },
 		profile: profileInfo,
 	}: SignUpUseCase.Input): Promise<SignUpUseCase.Output> {
-		await this.saga.run<void>(async () => {
+		const saga = new Saga();
+
+		await saga.run<void>(async () => {
 			const emailAlreadyInUse = await this.accountRepo.findByEmail(email);
 
 			if (emailAlreadyInUse) {
@@ -57,7 +58,7 @@ export class SignUpUseCase {
 				internalId: account.id,
 			});
 
-			this.saga.addCompensation(() =>
+			saga.addCompensation(() =>
 				this.authGateway.deleteUser({ externalId }),
 			);
 
