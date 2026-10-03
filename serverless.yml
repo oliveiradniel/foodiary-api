@@ -32,6 +32,9 @@ custom:
   deletionProtectionEnabled:
     dev: false
     prod: true
+  deletionPolicy:
+    dev: Delete
+    prod: Retain
 
 build:
   esbuild:
@@ -46,3 +49,4 @@ resources:
   - ${file(./sls/resources/UserPool.yml)}
   - ${file(./sls/resources/MainTable.yml)}
   - ${file(./sls/resources/APIGWCustomDomain.yml)}
+  - ${file(./sls/resources/MealsBucket.yml)}

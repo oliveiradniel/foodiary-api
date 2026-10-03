@@ -29,13 +29,16 @@
 		"@types/react": "^19.3.0",
 		"oxlint": "^1.85.0",
 		"prettier": "^3.9.8",
+		"tsx": "^4.23.15",
 		"typescript": "^7.0.2",
 		"unplugin-swc": "^2.0.0"
 	},
 	"dependencies": {
 		"@aws-sdk/client-cognito-identity-provider": "^3.1139.0",
 		"@aws-sdk/client-dynamodb": "^3.1140.0",
+		"@aws-sdk/client-s3": "^3.1145.0",
 		"@aws-sdk/lib-dynamodb": "^3.1140.0",
+		"@aws-sdk/s3-presigned-post": "^3.1145.0",
 		"react": "19.3.0",
 		"react-dom": "19.3.0",
 		"react-email": "6.11.0",
