@@ -17,3 +17,13 @@ listMealsByDay:
         method: GET
         authorizer:
           name: CognitoAuthorizer
+
+getMealById:
+  environment: ${file(./sls/config/env.yml)}
+  handler: src/main/functions/meals/getMealById.handler
+  events:
+    - httpApi:
+        path: /meals/{mealId}
+        method: GET
+        authorizer:
+          name: CognitoAuthorizer
