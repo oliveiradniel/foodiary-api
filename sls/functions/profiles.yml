@@ -1,0 +1,9 @@
+updateProfile:
+  environment: ${file(./sls/config/env.yml)}
+  handler: src/main/functions/profiles/updateProfile.handler
+  events:
+    - httpApi:
+        path: /profiles
+        method: PUT
+        authorizer:
+          name: CognitoAuthorizer
