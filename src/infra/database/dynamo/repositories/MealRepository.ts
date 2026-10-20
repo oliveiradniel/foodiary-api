@@ -3,6 +3,7 @@ import { Injectable } from '@kernel/decorators/Injectable';
 import {
 	GetCommand,
 	PutCommand,
+	UpdateCommand,
 	type PutCommandInput,
 } from '@aws-sdk/lib-dynamodb';
 
@@ -37,6 +38,37 @@ export class MealRepository {
 		}
 
 		return MealItem.toEntity(mealItem as MealItem.ItemType);
+	}
+
+	async save(meal: Meal): Promise<void> {
+		const mealItem = MealItem.fromEntity(meal).toItem();
+
+		const command = new UpdateCommand({
+			TableName: this.appConfig.db.dynamodb.mainTable,
+			Key: {
+				PK: mealItem.PK,
+				SK: mealItem.SK,
+			},
+			UpdateExpression:
+				'SET #status = :status, #attempts = :attempts, #name = :name, #icon = :icon, #foods = :foods',
+			ExpressionAttributeNames: {
+				'#status': 'status',
+				'#attempts': 'attempts',
+				'#name': 'name',
+				'#icon': 'icon',
+				'#foods': 'foods',
+			},
+			ExpressionAttributeValues: {
+				':status': mealItem.status,
+				':attempts': mealItem.attempts,
+				':name': mealItem.name,
+				':icon': mealItem.icon,
+				':foods': mealItem.foods,
+			},
+			ConditionExpression: 'attribute_exists(PK)',
+		});
+
+		await dynamoClient.send(command);
 	}
 
 	getPutCommandInput(meal: Meal): PutCommandInput {

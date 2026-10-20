@@ -7,6 +7,7 @@ import { Meal } from '@application/entities/Meal';
 // oxlint-disable-next-line typescript/consistent-type-imports
 import { AppConfig } from '@shared/config/AppConfig';
 
+import { HeadObjectCommand } from '@aws-sdk/client-s3';
 import { minutesToSeconds } from '@shared/utils/minutesToSeconds';
 import { randomUUIDv7 } from 'node:crypto';
 
@@ -31,6 +32,7 @@ export class MealsFileStorageGateway {
 	async createPOST({
 		mealId,
 		file,
+		accountId,
 	}: MealsFileStorageGateway.CreatePOSTParams): Promise<MealsFileStorageGateway.CreatePOSTResult> {
 		const bucket = this.appConfig.storage.mealsBucket;
 		const contentType =
@@ -48,6 +50,7 @@ export class MealsFileStorageGateway {
 			],
 			Fields: {
 				'x-amz-meta-mealid': mealId,
+				'x-amz-meta-accountid': accountId,
 			},
 		});
 
@@ -63,6 +66,26 @@ export class MealsFileStorageGateway {
 
 		return { uploadSignature };
 	}
+
+	async getFileMetadata({
+		fileKey,
+	}: MealsFileStorageGateway.GetFileMetadataParams): Promise<MealsFileStorageGateway.GetFileMetadataResult> {
+		const command = new HeadObjectCommand({
+			Bucket: this.appConfig.storage.mealsBucket,
+			Key: fileKey,
+		});
+
+		const { Metadata = {} } = await s3Client.send(command);
+
+		if (!Metadata.accountid || !Metadata.mealid) {
+			throw new Error(`[getFileMetadata] Cannot process file "${fileKey}"`);
+		}
+
+		return {
+			accountId: Metadata.accountid,
+			mealId: Metadata.mealid,
+		};
+	}
 }
 
 export namespace MealsFileStorageGateway {
@@ -73,6 +96,7 @@ export namespace MealsFileStorageGateway {
 
 	export type CreatePOSTParams = {
 		mealId: string;
+		accountId: string;
 		file: {
 			key: string;
 			size: number;
@@ -82,5 +106,14 @@ export namespace MealsFileStorageGateway {
 
 	export type CreatePOSTResult = {
 		uploadSignature: string;
+	};
+
+	export type GetFileMetadataParams = {
+		fileKey: string;
+	};
+
+	export type GetFileMetadataResult = {
+		accountId: string;
+		mealId: string;
 	};
 }
