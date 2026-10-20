@@ -27,3 +27,13 @@ getMealById:
         method: GET
         authorizer:
           name: CognitoAuthorizer
+
+onMealFileUploaded:
+  environment: ${file(./sls/config/env.yml)}
+  handler: src/main/functions/meals/onMealFileUploaded.handler
+  events:
+    - s3:
+        bucket: !Ref MealsBucket
+        event: s3:ObjectCreated:*
+        existing: true
+        forceDeploy: true
