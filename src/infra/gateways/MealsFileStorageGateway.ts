@@ -24,6 +24,10 @@ export class MealsFileStorageGateway {
 		return `${accountId}/${filename}`;
 	}
 
+	getFileURL(fileKey: string) {
+		return `https://${this.appConfig.cdn.mealsCDN}/${fileKey}`;
+	}
+
 	async createPOST({
 		mealId,
 		file,

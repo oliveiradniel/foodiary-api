@@ -1,14 +1,19 @@
+// oxlint-disable typescript/consistent-type-imports
+
 import { ResourceNotFound } from '@application/errors/application/ResourceNotFound';
 import { Injectable } from '@kernel/decorators/Injectable';
 
-// oxlint-disable-next-line typescript/consistent-type-imports
 import { MealRepository } from '@infra/database/dynamo/repositories/MealRepository';
+import { MealsFileStorageGateway } from '@infra/gateways/MealsFileStorageGateway';
 
 import type { Meal } from '@application/entities/Meal';
 
 @Injectable()
 export class GetMealByIdUseCase {
-	constructor(private readonly mealRepo: MealRepository) {}
+	constructor(
+		private readonly mealRepo: MealRepository,
+		private readonly mealsFileStorageGateway: MealsFileStorageGateway,
+	) {}
 
 	async execute({
 		accountId,
@@ -20,12 +25,16 @@ export class GetMealByIdUseCase {
 			throw new ResourceNotFound('Meal not found.');
 		}
 
+		const inputFileURL = this.mealsFileStorageGateway.getFileURL(
+			meal.inputFileKey,
+		);
+
 		return {
 			meal: {
 				id: meal.id,
 				status: meal.status,
 				inputType: meal.inputType,
-				inputFileKey: meal.inputFileKey,
+				inputFileURL,
 				name: meal.name,
 				icon: meal.icon,
 				foods: meal.foods,
@@ -47,7 +56,7 @@ export namespace GetMealByIdUseCase {
 			id: string;
 			status: Meal.Status;
 			inputType: Meal.InputType;
-			inputFileKey: string;
+			inputFileURL: string;
 			name: string;
 			icon: string;
 			foods: Meal.Food[];
