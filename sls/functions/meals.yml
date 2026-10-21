@@ -37,3 +37,13 @@ onMealFileUploaded:
         event: s3:ObjectCreated:*
         existing: true
         forceDeploy: true
+
+processMeal:
+  environment: ${file(./sls/config/env.yml)}
+  memorySize: 1024
+  timeout: 120
+  handler: src/main/functions/meals/processMeal.handler
+  events:
+    - sqs:
+        arn: !GetAtt MealsQueue.Arn
+        batchSize: 2
