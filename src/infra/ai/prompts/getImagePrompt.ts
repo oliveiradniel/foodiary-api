@@ -1,5 +1,7 @@
 import dedent from 'ts-dedent';
 
+import { getMealClassificationPrompt } from './getMealClassificationPrompt';
+
 export function getImagePrompt() {
 	return dedent`
   # Role and Objective
@@ -57,21 +59,7 @@ export function getImagePrompt() {
 
   ## 4. Meal Classification
 
-  Assign a meal name and an appropriate emoji based on the provided meal date and local time, when available.
-
-  Use the following categories:
-
-  - "Café da manhã" — ☕
-  - "Almoço" — 🍛
-  - "Lanche" — 🍎
-  - "Jantar" — 🍽️
-  - "Ceia" — 🌙
-
-  Use "Lanche" for snacks regardless of whether they occur in the morning or afternoon.
-
-  If the local time is unavailable or the meal category cannot be reasonably determined, use "Refeição" with the 🍽️ emoji.
-
-  Never invent a meal time or infer the current time from the photograph.
+  ${getMealClassificationPrompt()}
 
   ## 5. Output Format
 
