@@ -27,6 +27,7 @@
 		"@types/aws-lambda": "^8.10.163",
 		"@types/node": "^26.6.2",
 		"@types/react": "^19.3.0",
+		"dotenv": "^18.0.8",
 		"oxlint": "^1.85.0",
 		"prettier": "^3.9.8",
 		"tsx": "^4.23.15",
@@ -40,10 +41,12 @@
 		"@aws-sdk/client-sqs": "^3.1153.0",
 		"@aws-sdk/lib-dynamodb": "^3.1140.0",
 		"@aws-sdk/s3-presigned-post": "^3.1145.0",
+		"openai": "^7.39.0",
 		"react": "19.3.0",
 		"react-dom": "19.3.0",
 		"react-email": "6.11.0",
 		"reflect-metadata": "^0.2.2",
+		"ts-dedent": "^2.3.0",
 		"zod": "^4.6.5"
 	}
 }
