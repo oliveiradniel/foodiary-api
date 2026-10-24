@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import type { Constructor } from '@shared/types/Constructor';
 
 export class Registry {

@@ -3,7 +3,8 @@ import { Injectable } from '@kernel/decorators/Injectable';
 
 import { getImagePrompt } from '@infra/ai/prompts/getImagePrompt';
 import { getTextPrompt } from '@infra/ai/prompts/getTextPrompt';
-import OpenAI, { toFile } from 'openai';
+import { openAIClient } from '@infra/clients/openaiClient';
+import { toFile } from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
 import dedent from 'ts-dedent';
 
@@ -37,8 +38,6 @@ export class MealsAIGateway {
 	constructor(
 		private readonly mealsFileStorageGateway: MealsFileStorageGateway,
 	) {}
-
-	private readonly client = new OpenAI();
 
 	async processMeal(meal: Meal): Promise<MealsAIGateway.ProcessMealResult> {
 		const mealFileURL = this.mealsFileStorageGateway.getFileURL(
@@ -88,7 +87,7 @@ export class MealsAIGateway {
 		systemPrompt,
 		userMessageParts,
 	}: MealsAIGateway.CallAIParams): Promise<MealsAIGateway.ProcessMealResult> {
-		const response = await this.client.chat.completions.create({
+		const response = await openAIClient.chat.completions.create({
 			model: 'gpt-4.1-mini',
 			response_format: zodResponseFormat(mealSchema, 'meal'),
 			messages: [
@@ -124,7 +123,7 @@ export class MealsAIGateway {
 	private async transcribe(mealFileURL: string) {
 		const audioFile = await downloadFileFromURL(mealFileURL);
 
-		const { text } = await this.client.audio.transcriptions.create({
+		const { text } = await openAIClient.audio.transcriptions.create({
 			model: 'gpt-4o-mini-transcribe',
 			file: await toFile(audioFile, 'audio.m4a', { type: 'audio/m4a' }),
 		});
