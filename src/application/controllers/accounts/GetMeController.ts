@@ -18,19 +18,20 @@ export class GetMeController extends Controller<
 	}: Controller.Request<'private'>): Promise<
 		Controller.Response<GetMeController.Response>
 	> {
-		const response = await this.getProfileAndGoalQuery.execute({ accountId });
+		const { goal, profile } = await this.getProfileAndGoalQuery.execute({
+			accountId,
+		});
 
 		return {
 			statusCode: 200,
 			body: {
-				data: response,
+				goal,
+				profile,
 			},
 		};
 	}
 }
 
 export namespace GetMeController {
-	export type Response = {
-		data: GetProfileAndGoalQuery.Output;
-	};
+	export type Response = GetProfileAndGoalQuery.Output;
 }
